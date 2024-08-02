@@ -89,7 +89,8 @@ class RobotBaseNode(Node):
     def publish_lidar(self, points, stamp):
 
         point_cloud = PointCloud2()
-        point_cloud.header = Header(frame_id="odom")
+        # point_cloud.header = Header(frame_id="odom")
+        point_cloud.header = Header(frame_id="base_link")
         point_cloud.header.stamp = stamp #self.get_clock().now().to_msg()
         fields = [
             PointField(name='x', offset=0, datatype=PointField.FLOAT32, count=1),
@@ -103,4 +104,4 @@ class RobotBaseNode(Node):
     async def run(self):
         while True:
             self.publish_lidar()
-            await asyncio.sleep(0.1)
+            await asyncio.sleep(0.05)

@@ -201,11 +201,12 @@ def run_sim():
     cameraCfg = CameraCfg(
         prim_path="/World/envs/env_0/Robot/base/front_cam",
         update_period=0.1,
-        height=480,
-        width=640,
+        height=720, #480,
+        width=1280, #640,
         data_types=["rgb"],
         spawn=sim_utils.PinholeCameraCfg(
             focal_length=24.0, focus_distance=400.0, horizontal_aperture=20.955, clipping_range=(0.1, 1.0e5)
+            # focal_length=24.0, focus_distance=400.0, horizontal_aperture=35.0, clipping_range=(0.1, 1.0e5)
         ),
         offset=CameraCfg.OffsetCfg(pos=(0.32487, -0.00095, 0.05362), rot=(0.5, -0.5, 0.5, -0.5), convention="ros"),
     )
@@ -246,10 +247,19 @@ def run_sim():
             try:
                 if (time.time() - start_time) > 1/20:
                     data = annotator.get_data()
-                    point_cloud = update_meshes_for_cloud2(
-                        data['data'], env.env.scene["robot"].data.root_state_w[0, :3], 
-                        env.env.scene["robot"].data.root_state_w[0, 3:7]
-                        )
+                    # point_cloud = update_meshes_for_cloud2(
+                    #     data['data'], env.env.scene["robot"].data.root_state_w[0, :3], 
+                    #     env.env.scene["robot"].data.root_state_w[0, 3:7]
+                    #     )
+                    # point_cloud = data['data']
+                    
+                    
+                    # rotation = Rotation.from_quat([1.0, 0.0, 0.0, 0.0])
+                    # point_cloud = rotation.apply(data['data'])
+                    point_cloud = data['data'] + [0.28945, 0, -0.046825]
+                    
+                    
+                    
                     base_node.publish_lidar(point_cloud, stamp)
                     start_time = time.time()
             except :
