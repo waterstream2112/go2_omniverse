@@ -5,7 +5,7 @@ from __future__ import annotations
 """Launch Isaac Sim Simulator first."""
 import argparse
 from omni.isaac.orbit.app import AppLauncher
-
+# from pxr import Usd, Gf
 
 import cli_args  
 import time
@@ -122,6 +122,10 @@ def setup_custom_env():
         if (args_cli.custom_env == "office"):
             cfg_scene = sim_utils.UsdFileCfg(usd_path="./envs/office.usd")
             cfg_scene.func("/World/office", cfg_scene, translation=(0.0, 0.0, 0.0))
+            
+        if (args_cli.custom_env == "house"):
+            cfg_scene = sim_utils.UsdFileCfg(usd_path="./envs/house.usd")
+            cfg_scene.func("/World/house", cfg_scene, translation=(3.5, 0.0, 0.0))
             
         # following config for stair does not work
         # if (args_cli.custom_env == "stair"):

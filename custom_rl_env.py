@@ -108,21 +108,21 @@ class MySceneCfg(InteractiveSceneCfg):
     contact_forces = ContactSensorCfg(prim_path="{ENV_REGEX_NS}/Robot/.*", history_length=3, track_air_time=True)
     
     # lights
-    light = AssetBaseCfg(
-        prim_path="/World/light",
-        spawn=sim_utils.DistantLightCfg(color=(0.75, 0.75, 0.75), intensity=3000.0),
-    )
+    # light = AssetBaseCfg(
+    #     prim_path="/World/light",
+    #     spawn=sim_utils.DistantLightCfg(color=(0.75, 0.75, 0.75), intensity=3000.0),
+    # )
 
-    sky_light = AssetBaseCfg(
-        prim_path="/World/skyLight",
-        spawn=sim_utils.DomeLightCfg(color=(0.13, 0.13, 0.13), intensity=1000.0),
-    )
+    # sky_light = AssetBaseCfg(
+    #     prim_path="/World/skyLight",
+    #     spawn=sim_utils.DomeLightCfg(color=(0.13, 0.13, 0.13), intensity=5000.0),
+    # )
 
 
 @configclass
 class ViewerCfg:
     """Configuration of the scene viewport camera."""
-    eye: tuple[float, float, float] = (7.5, 7.5, 7.5)
+    eye: tuple[float, float, float] = (-3.5, -3.5, 11.0)
 
     lookat: tuple[float, float, float] = (0.0, 0.0, 0.0)
 
@@ -304,6 +304,13 @@ class UnitreeGo2CustomEnvCfg(LocomotionVelocityRoughEnvCfg):
         super().__post_init__()
 
         self.scene.robot = UNITREE_GO2_CFG.replace(prim_path="{ENV_REGEX_NS}/Robot")
+        
+        # stage: Usd.Stage = omni.usd.get_context().get_stage()
+        # robot = stage.GetPrimAtPath("{ENV_REGEX_NS}/Robot")
+        # robot.GetAttribute("xformOp:translate").Set(Gf.Vec3d(-3.0, -2.0, 0), 0)
+        # self.scene.robot.GetAttribute("xformOp:rotateXYZ").Set(Gf.Vec3d(0, 90.0, 0), 0)
+        # self.scene.robot.GetAttribute("xformOp:scale").Set(Gf.Vec3d(1.0, 1.0, 1.0), 0)
+        
         self.scene.height_scanner.prim_path = "{ENV_REGEX_NS}/Robot/base"
 
 

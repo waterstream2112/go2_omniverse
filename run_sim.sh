@@ -44,5 +44,6 @@ export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libstdc++.so.6
 # python3 main.py
 # ${ISAACSIM_PYTHON_EXE} main.py
 # ${ISAACSIM_PYTHON_EXE} main.py --custom_env=stair
-${ISAACSIM_PYTHON_EXE} main.py --custom_env=office
+# ${ISAACSIM_PYTHON_EXE} main.py --custom_env=office
+${ISAACSIM_PYTHON_EXE} main.py --custom_env=house
 # ${ISAACSIM_PYTHON_EXE} main.py --custom_env=warehouse
