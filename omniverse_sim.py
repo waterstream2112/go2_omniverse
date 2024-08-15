@@ -125,7 +125,11 @@ def setup_custom_env():
             
         if (args_cli.custom_env == "house"):
             cfg_scene = sim_utils.UsdFileCfg(usd_path="./envs/house.usd")
-            cfg_scene.func("/World/house", cfg_scene, translation=(3.5, 0.0, 0.0))
+            cfg_scene.func("/World/house", cfg_scene, translation=(3.5, 4.0, 0.0))
+            
+        if (args_cli.custom_env == "YB"):
+            cfg_scene = sim_utils.UsdFileCfg(usd_path="./envs/D1_v2_2.usd")
+            cfg_scene.func("/World/house", cfg_scene, translation=(0.0, -5.0, 0.0))
             
         # following config for stair does not work
         # if (args_cli.custom_env == "stair"):
@@ -194,7 +198,7 @@ def run_sim():
 
 
     lidar_sensor = LidarRtx(f'/World/envs/env_0/Robot/base/lidar_sensor',
-                                         translation=(0.28945, 0, -0.046825),
+                                         translation=(0.28945, 0.0, -0.046825),
                                          orientation=(1.0, 0.0, 0.0, 0.0),
                                          config_file_name= "Unitree_L1",
                                          )
@@ -226,6 +230,7 @@ def run_sim():
     start_time = time.time()
 
     setup_custom_env()
+    
 
     # simulate environment
     while simulation_app.is_running():
@@ -239,6 +244,12 @@ def run_sim():
 
             # publish ros2 info
             stamp = base_node.get_clock().now().to_msg()
+            
+            base_node.broadcast_static_tf("base_link", 
+                                            "L1_frame", 
+                                            translation=(0.28945, 0.0, -0.046825),
+                                            rotation=(1.0, 0.0, 0.0, 0.0),
+                                            )
             
             base_node.publish_joints(env.env.scene["robot"].data.joint_names, env.env.scene["robot"].data.joint_pos[0])
             base_node.publish_robot_state([
@@ -260,10 +271,10 @@ def run_sim():
                     
                     # rotation = Rotation.from_quat([1.0, 0.0, 0.0, 0.0])
                     # point_cloud = rotation.apply(data['data'])
-                    point_cloud = data['data'] + [0.28945, 0, -0.046825]
+                    # point_cloud = data['data'] + [0.28945, 0, -0.046825]
+                    point_cloud = data['data']
                     
-                    
-                    
+            
                     base_node.publish_lidar(point_cloud, stamp)
                     start_time = time.time()
             except :

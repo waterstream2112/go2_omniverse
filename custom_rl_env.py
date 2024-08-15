@@ -122,9 +122,9 @@ class MySceneCfg(InteractiveSceneCfg):
 @configclass
 class ViewerCfg:
     """Configuration of the scene viewport camera."""
-    eye: tuple[float, float, float] = (-1.0, 0.0, 18.0)
+    eye: tuple[float, float, float] = (-1.0, -4.0, 15.0)
 
-    lookat: tuple[float, float, float] = (3.0, 0.0, 0.0)
+    lookat: tuple[float, float, float] = (3.0, -4.0, 0.0)
 
     cam_prim_path: str = "/OmniverseKit_Persp"
 

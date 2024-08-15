@@ -28,7 +28,7 @@ from rclpy.node import Node
 from rclpy.qos import QoSProfile, qos_profile_sensor_data
 from sensor_msgs.msg import JointState
 from geometry_msgs.msg import TransformStamped
-from tf2_ros import TransformBroadcaster
+from tf2_ros import TransformBroadcaster, StaticTransformBroadcaster
 from go2_interfaces.msg import Go2State
 from std_msgs.msg import Header
 from sensor_msgs.msg import PointCloud2, PointField
@@ -43,6 +43,7 @@ class RobotBaseNode(Node):
         self.go2_state_pub = self.create_publisher(Go2State, 'go2_states', qos_profile)
         self.go2_lidar_pub = self.create_publisher(PointCloud2, 'point_cloud2', qos_profile=qos_profile_sensor_data)
         self.broadcaster = TransformBroadcaster(self, qos=qos_profile)
+        self.staticBroadcaster = TransformBroadcaster(self, qos=qos_profile)
         
     def publish_joints(self, joint_names_lst, joint_state_lst):
         # Create message
@@ -65,7 +66,8 @@ class RobotBaseNode(Node):
         odom_trans = TransformStamped()
         odom_trans.header.stamp = stamp #self.get_clock().now().to_msg()
         odom_trans.header.frame_id = 'odom'
-        odom_trans.child_frame_id = 'L1_frame'
+        odom_trans.child_frame_id = 'base_link'
+        # odom_trans.child_frame_id = 'L1_frame'
         odom_trans.transform.translation.x = base_pos[0].item()
         odom_trans.transform.translation.y = base_pos[1].item()
         odom_trans.transform.translation.z = base_pos[2].item() + 0.07
@@ -89,8 +91,11 @@ class RobotBaseNode(Node):
     def publish_lidar(self, points, stamp):
 
         point_cloud = PointCloud2()
+        
         # point_cloud.header = Header(frame_id="odom")
+        # point_cloud.header = Header(frame_id="base_link")
         point_cloud.header = Header(frame_id="L1_frame")
+        
         point_cloud.header.stamp = stamp #self.get_clock().now().to_msg()
         fields = [
             PointField(name='x', offset=0, datatype=PointField.FLOAT32, count=1),
@@ -99,7 +104,25 @@ class RobotBaseNode(Node):
         ]
         point_cloud = point_cloud2.create_cloud(point_cloud.header, fields, points)
         self.go2_lidar_pub.publish(point_cloud)
+        
 
+    def broadcast_static_tf(self, parent, child, translation, rotation):
+        
+        static_trans = TransformStamped()
+        static_trans.header.stamp = self.get_clock().now().to_msg()
+        static_trans.header.frame_id = parent
+        static_trans.child_frame_id = child
+    
+        static_trans.transform.translation.x = translation[0]
+        static_trans.transform.translation.y = translation[1]
+        static_trans.transform.translation.z = translation[2]
+        
+        static_trans.transform.rotation.w = rotation[0]
+        static_trans.transform.rotation.x = rotation[1]
+        static_trans.transform.rotation.y = rotation[2]
+        static_trans.transform.rotation.z = rotation[3]
+        
+        self.staticBroadcaster.sendTransform(static_trans)
 
     async def run(self):
         while True:
