@@ -304,6 +304,7 @@ class UnitreeGo2CustomEnvCfg(LocomotionVelocityRoughEnvCfg):
         super().__post_init__()
 
         self.scene.robot = UNITREE_GO2_CFG.replace(prim_path="{ENV_REGEX_NS}/Robot")
+        self.scene.robot.translation = (0.0, 5.0, 0.0)
         
         # stage: Usd.Stage = omni.usd.get_context().get_stage()
         # robot = stage.GetPrimAtPath("{ENV_REGEX_NS}/Robot")

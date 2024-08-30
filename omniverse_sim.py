@@ -2,10 +2,12 @@
 from __future__ import annotations
 
 
+
 """Launch Isaac Sim Simulator first."""
 import argparse
 from omni.isaac.orbit.app import AppLauncher
-# from pxr import Usd, Gf
+
+
 
 import cli_args  
 import time
@@ -84,6 +86,8 @@ from custom_rl_env import UnitreeGo2CustomEnvCfg
 import custom_rl_env
 from terrain_cfg import ROUGH_TERRAINS_CFG
 
+from pxr import Usd, UsdGeom, Gf
+
 
 def sub_keyboard_event(event, *args, **kwargs) -> bool:
     if event.type == carb.input.KeyboardEventType.KEY_PRESS:
@@ -128,8 +132,8 @@ def setup_custom_env():
             cfg_scene.func("/World/house", cfg_scene, translation=(3.5, 4.0, 0.0))
             
         if (args_cli.custom_env == "YB"):
-            cfg_scene = sim_utils.UsdFileCfg(usd_path="./envs/D1_v2_2.usd")
-            cfg_scene.func("/World/house", cfg_scene, translation=(0.0, -5.0, 0.0))
+            cfg_scene = sim_utils.UsdFileCfg(usd_path="./envs/D1_v3_3.usd")
+            cfg_scene.func("/World/house", cfg_scene, translation=(12.0, -11.0, 0.0))
             
         # following config for stair does not work
         # if (args_cli.custom_env == "stair"):
@@ -152,7 +156,7 @@ def run_sim():
     _appwindow = omni.appwindow.get_default_app_window()
     _keyboard = _appwindow.get_keyboard()
     _sub_keyboard = _input.subscribe_to_keyboard_events(_keyboard, sub_keyboard_event)
-
+    
     """Play with RSL-RL agent."""
     # parse configuration
     
@@ -165,6 +169,30 @@ def run_sim():
     env = gym.make(args_cli.task, cfg=env_cfg)
     # wrap around environment for rsl-rl
     env = RslRlVecEnvWrapper(env)
+    
+    
+    # ####################### set robot position
+    
+    # # Step 1: Get the current stage
+    # stage = omni.usd.get_context().get_stage()
+
+    # # # Step 2: Define the path to the prim you want to modify
+    # prim_path = "/World/envs/env_0/Robot"
+
+    # # # Step 3: Get the prim
+    # prim = stage.GetPrimAtPath(prim_path)
+
+    # # Check if the prim exists
+    # if not prim:
+    #     print(f"Prim at path {prim_path} does not exist.")
+    # else:
+    #     transOp = prim.GetAttribute('xformOp:translate')
+    #     transOp.Set((0.0, 10.0, 0.0))
+    
+    
+    # ############################################
+    
+    
     # specify directory for logging experiments
     log_root_path = os.path.join("logs", "rsl_rl", agent_cfg["experiment_name"])
     log_root_path = os.path.abspath(log_root_path)
@@ -231,7 +259,7 @@ def run_sim():
 
     setup_custom_env()
     
-
+    
     # simulate environment
     while simulation_app.is_running():
         # run everything in inference mode
