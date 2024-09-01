@@ -133,7 +133,8 @@ def setup_custom_env():
             
         if (args_cli.custom_env == "YB"):
             cfg_scene = sim_utils.UsdFileCfg(usd_path="./envs/D1_v3_3.usd")
-            cfg_scene.func("/World/house", cfg_scene, translation=(12.0, -11.0, 0.0))
+            cfg_scene.func("/World/house", cfg_scene, translation=(14.50, 2.50, 0.0))
+            # cfg_scene.func("/World/house", cfg_scene, translation=(2.0, -11.50, 0.0))
             
         # following config for stair does not work
         # if (args_cli.custom_env == "stair"):
@@ -226,7 +227,8 @@ def run_sim():
 
 
     lidar_sensor = LidarRtx(f'/World/envs/env_0/Robot/base/lidar_sensor',
-                                         translation=(0.28945, 0.0, -0.046825),
+                                        #  translation=(0.28945, 0.0, -0.046825),
+                                         translation=(0.28945, 0.0, 0.15),
                                          orientation=(1.0, 0.0, 0.0, 0.0),
                                          config_file_name= "Unitree_L1",
                                          )
@@ -275,7 +277,8 @@ def run_sim():
             
             base_node.broadcast_static_tf("base_link", 
                                             "L1_frame", 
-                                            translation=(0.28945, 0.0, -0.046825),
+                                            # translation=(0.28945, 0.0, -0.046825),
+                                            translation=(0.28945, 0.0, 0.15),
                                             rotation=(1.0, 0.0, 0.0, 0.0),
                                             )
             
