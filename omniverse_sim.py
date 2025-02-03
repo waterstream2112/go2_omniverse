@@ -1,6 +1,10 @@
 """Script to play a checkpoint if an RL agent from RSL-RL."""
 from __future__ import annotations
 
+import carb.input
+import omni.kit
+import omni.kit.app
+
 
 
 """Launch Isaac Sim Simulator first."""
@@ -134,7 +138,12 @@ def setup_custom_env():
         if (args_cli.custom_env == "YB"):
             cfg_scene = sim_utils.UsdFileCfg(usd_path="./envs/D1_v3_3.usd")
             cfg_scene.func("/World/house", cfg_scene, translation=(14.50, 2.50, 0.0))
-            # cfg_scene.func("/World/house", cfg_scene, translation=(2.0, -11.50, 0.0))
+            
+        if (args_cli.custom_env == "BD"):
+            # cfg_scene = sim_utils.UsdFileCfg(usd_path="./envs/Brandon/01/ForBrandon.usd")
+            cfg_scene = sim_utils.UsdFileCfg(usd_path="/home/nghiaho/ForOthers/Brandon/L_Nemeaeus_v007_02/L_Nemeaeus_v007_02_.usd")
+            cfg_scene.func("/World/house", cfg_scene, translation=(14.50, 2.50, 0.0))
+    
             
         # following config for stair does not work
         # if (args_cli.custom_env == "stair"):

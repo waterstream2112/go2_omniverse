@@ -1,3 +1,8 @@
+# Program structure
+
+run_sim.sh --> main.py --> omniverse_sim (run_rim())
+
+
 # Welcome to the Unitree Go2 Omniverse Project!
 
 I am thrilled to announce that the Unitree Go2 robot has now been integrated with the Nvidia Isaac Sim (Orbit), marking a major step forward in robotics research and development. The combination of these two cutting-edge technologies opens up a world of possibilities for creating and testing algorithms in a variety of simulated environments.
@@ -181,3 +186,5 @@ I have tested it on:
 ## License
 
 This project is licensed under the BSD 2-clause License - see the [LICENSE](https://github.com/abizovnuralem/go2_omniverse/blob/master/LICENSE) file for details.
+
+
