@@ -68,7 +68,7 @@ class RobotBaseNode(Node):
         odom_trans = TransformStamped()
         odom_trans.header.stamp = stamp #self.get_clock().now().to_msg()
         odom_trans.header.frame_id = 'odom'
-        odom_trans.child_frame_id = 'lidar_frame' #'base_link'
+        odom_trans.child_frame_id = 'base_link'
         # odom_trans.child_frame_id = 'L1_frame'
         odom_trans.transform.translation.x = base_pos[0].item()
         odom_trans.transform.translation.y = base_pos[1].item()
@@ -111,7 +111,8 @@ class RobotBaseNode(Node):
         
         # point_cloud.header = Header(frame_id="odom")
         # point_cloud.header = Header(frame_id="base_link")
-        point_cloud.header = Header(frame_id="L1_frame")
+        # point_cloud.header = Header(frame_id="L1_frame")
+        point_cloud.header = Header(frame_id="lidar_frame")
         
         point_cloud.header.stamp = stamp #self.get_clock().now().to_msg()
         fields = [

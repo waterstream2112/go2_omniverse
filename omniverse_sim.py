@@ -291,7 +291,8 @@ def run_sim():
             stamp = base_node.get_clock().now().to_msg()
             
             base_node.broadcast_static_tf("base_link", 
-                                            "L1_frame", 
+                                            # "L1_frame", 
+                                            "lidar_frame",
                                             # translation=(0.28945, 0.0, -0.046825),
                                             translation=(0.28945, 0.0, 0.15),
                                             rotation=(1.0, 0.0, 0.0, 0.0),
