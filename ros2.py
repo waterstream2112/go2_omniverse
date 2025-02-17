@@ -27,7 +27,8 @@ from rclpy.time import Time
 from rclpy.node import Node
 from rclpy.qos import QoSProfile, qos_profile_sensor_data
 from sensor_msgs.msg import JointState
-from geometry_msgs.msg import TransformStamped
+from geometry_msgs.msg import TransformStamped, PoseStamped
+from nav_msgs.msg import Odometry
 from tf2_ros import TransformBroadcaster, StaticTransformBroadcaster
 from go2_interfaces.msg import Go2State
 from std_msgs.msg import Header
@@ -42,6 +43,7 @@ class RobotBaseNode(Node):
         self.joint_pub = self.create_publisher(JointState, 'joint_states', qos_profile)
         self.go2_state_pub = self.create_publisher(Go2State, 'go2_states', qos_profile)
         self.go2_lidar_pub = self.create_publisher(PointCloud2, 'point_cloud2', qos_profile=qos_profile_sensor_data)
+        self.go2_odom_pub = self.create_publisher(Odometry, 'odom', qos_profile)
         self.broadcaster = TransformBroadcaster(self, qos=qos_profile)
         self.staticBroadcaster = TransformBroadcaster(self, qos=qos_profile)
         
@@ -66,7 +68,7 @@ class RobotBaseNode(Node):
         odom_trans = TransformStamped()
         odom_trans.header.stamp = stamp #self.get_clock().now().to_msg()
         odom_trans.header.frame_id = 'odom'
-        odom_trans.child_frame_id = 'base_link'
+        odom_trans.child_frame_id = 'lidar_frame' #'base_link'
         # odom_trans.child_frame_id = 'L1_frame'
         odom_trans.transform.translation.x = base_pos[0].item()
         odom_trans.transform.translation.y = base_pos[1].item()
@@ -76,6 +78,21 @@ class RobotBaseNode(Node):
         odom_trans.transform.rotation.z = base_rot[3].item()
         odom_trans.transform.rotation.w = base_rot[0].item()
         self.broadcaster.sendTransform(odom_trans)
+        
+        odom = Odometry()
+        odom.header.stamp = stamp
+        odom.header.frame_id = 'odom'
+        
+        odom.pose.pose.position.x = base_pos[0].item()
+        odom.pose.pose.position.y = base_pos[1].item()
+        odom.pose.pose.position.z = base_pos[2].item()
+        
+        odom.pose.pose.orientation.w = base_rot[0].item()
+        odom.pose.pose.orientation.x = base_rot[1].item()
+        odom.pose.pose.orientation.y = base_rot[2].item()
+        odom.pose.pose.orientation.z = base_rot[3].item()
+        
+        self.go2_odom_pub.publish(odom)
 
     def publish_robot_state(self, foot_force_lst):
 
