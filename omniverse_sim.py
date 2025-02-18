@@ -290,13 +290,13 @@ def run_sim():
             # publish ros2 info
             stamp = base_node.get_clock().now().to_msg()
             
-            base_node.broadcast_static_tf("base_link", 
-                                            # "L1_frame", 
-                                            "lidar_frame",
-                                            # translation=(0.28945, 0.0, -0.046825),
-                                            translation=(0.28945, 0.0, 0.15),
-                                            rotation=(1.0, 0.0, 0.0, 0.0),
-                                            )
+            # base_node.broadcast_static_tf("base_link", 
+            #                                 # "L1_frame", 
+            #                                 "lidar_frame",
+            #                                 # translation=(0.28945, 0.0, -0.046825),
+            #                                 translation=(0.28945, 0.0, 0.15),
+            #                                 rotation=(1.0, 0.0, 0.0, 0.0),
+            #                                 )
             
             base_node.publish_joints(env.env.scene["robot"].data.joint_names, env.env.scene["robot"].data.joint_pos[0])
             base_node.publish_robot_state([
