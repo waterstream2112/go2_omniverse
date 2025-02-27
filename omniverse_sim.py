@@ -144,11 +144,16 @@ def setup_custom_env():
             # cfg_scene = sim_utils.UsdFileCfg(usd_path="/home/nghiaho/ForOthers/Brandon/L_Nemeaeus_v007_02/L_Nemeaeus_v007_02_.usd")
             # cfg_scene.func("/World/house", cfg_scene, translation=(14.50, 2.50, 0.0))
             
-            cfg_scene = sim_utils.UsdFileCfg(usd_path="/home/nghiaho/ForOthers/Brandon/2025_02_03_10x10_env_1/L_10x10_Room_v01_.usd")
+            # cfg_scene = sim_utils.UsdFileCfg(usd_path="/home/nghiaho/ForOthers/Brandon/2025_02_03_10x10_env_1/L_10x10_Room_v01_.usd")
+            cfg_scene = sim_utils.UsdFileCfg(usd_path="/home/nghiaho/ForOthers/Brandon/2025_02_27_10x10_env_2/10_by_10_env_2.usd")
             cfg_scene.func("/World/house", cfg_scene, translation=(0.0, 0.0, 0.0))
             
             # cfg_scene = sim_utils.UsdFileCfg(usd_path="/home/nghiaho/Nemeaeus/SceneGraph/SimEnv/Procyon_IROS_ENV/IROS_ENV_01/L_Procyon_FireENV_01_.usd")
             # cfg_scene.func("/World/house", cfg_scene, translation=(14.50, 3.50, 0.0))
+            
+        if (args_cli.custom_env == "Patt"):
+            cfg_scene = sim_utils.UsdFileCfg(usd_path="/home/nghiaho/Nemeaeus/SceneGraph/SimEnv/Procyon_IROS_ENV/IROS_ENV_01/L_Procyon_FireENV_01_.usd")
+            cfg_scene.func("/World/house", cfg_scene, translation=(14.50, 3.50, 0.0))
     
             
         # following config for stair does not work

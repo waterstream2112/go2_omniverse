@@ -122,10 +122,9 @@ class MySceneCfg(InteractiveSceneCfg):
 @configclass
 class ViewerCfg:
     """Configuration of the scene viewport camera."""
-    # eye: tuple[float, float, float] = (-1.0, -4.0, 15.0)
-    # lookat: tuple[float, float, float] = (3.0, -4.0, 0.0)
     
     eye: tuple[float, float, float] = (-4.0, 10.0, 30.0)
+    
     lookat: tuple[float, float, float] = (6.0, 10.0, 0.0)
 
     cam_prim_path: str = "/OmniverseKit_Persp"
@@ -299,6 +298,7 @@ class LocomotionVelocityRoughEnvCfg(RLTaskEnvCfg):
             if self.scene.terrain.terrain_generator is not None:
                 self.scene.terrain.terrain_generator.curriculum = False
 
+
 @configclass
 class UnitreeGo2CustomEnvCfg(LocomotionVelocityRoughEnvCfg):
     def __post_init__(self):
@@ -306,7 +306,8 @@ class UnitreeGo2CustomEnvCfg(LocomotionVelocityRoughEnvCfg):
         super().__post_init__()
 
         self.scene.robot = UNITREE_GO2_CFG.replace(prim_path="{ENV_REGEX_NS}/Robot")
-        self.scene.robot.translation = (0.0, 5.0, 0.0)
+        # self.scene.robot.translation = (0.0, 5.0, 0.0)
+        # self.scene.robot.translation = (0.0, 0.0, 0.10)
         
         # stage: Usd.Stage = omni.usd.get_context().get_stage()
         # robot = stage.GetPrimAtPath("{ENV_REGEX_NS}/Robot")
