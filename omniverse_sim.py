@@ -191,29 +191,6 @@ def run_sim():
     # wrap around environment for rsl-rl
     env = RslRlVecEnvWrapper(env)
     
-    
-    # ####################### set robot position
-    
-    # # Step 1: Get the current stage
-    # stage = omni.usd.get_context().get_stage()
-
-    # # # Step 2: Define the path to the prim you want to modify
-    # prim_path = "/World/envs/env_0/Robot"
-
-    # # # Step 3: Get the prim
-    # prim = stage.GetPrimAtPath(prim_path)
-
-    # # Check if the prim exists
-    # if not prim:
-    #     print(f"Prim at path {prim_path} does not exist.")
-    # else:
-    #     transOp = prim.GetAttribute('xformOp:translate')
-    #     transOp.Set((0.0, 10.0, 0.0))
-    
-    
-    # ############################################
-    
-    
     # specify directory for logging experiments
     log_root_path = os.path.join("logs", "rsl_rl", agent_cfg["experiment_name"])
     log_root_path = os.path.abspath(log_root_path)
@@ -238,26 +215,34 @@ def run_sim():
     
     base_node = RobotBaseNode()
 
-    node_test = rclpy.create_node('position_velocity_publisher')
+    node_test = rclpy.create_node('position_velocity_subscriber')
     cmd_vel_sub = node_test.create_subscription(Twist, 'cmd_vel', cmd_vel_cb, 10)
 
     # Spin in a separate thread
     thread = threading.Thread(target=rclpy.spin, args=(node_test, ), daemon=True)
     thread.start()
 
-
+    # Create lidar
     lidar_sensor = LidarRtx(f'/World/envs/env_0/Robot/base/lidar_sensor',
                                         #  translation=(0.28945, 0.0, -0.046825),
                                          translation=(0.28945, 0.0, 0.15),
                                          orientation=(1.0, 0.0, 0.0, 0.0),
                                          config_file_name= "Unitree_L1",
                                          )
+    # # Create the debug draw pipeline in the post process graph
+    # writer = rep.writers.get("RtxLidar" + "DebugDrawPointCloudBuffer")
+    # writer.attach([lidar_sensor.get_render_product_path()])
+
+    # annotator = rep.AnnotatorRegistry.get_annotator("RtxSensorCpuIsaacCreateRTXLidarScanBuffer")
+    # annotator.attach(lidar_sensor.get_render_product_path())
     
-    print("!!!!!!!!!!!!!!!!!")
     print(lidar_sensor)
 
+
+    # Create camera
     cameraCfg = CameraCfg(
         prim_path="/World/envs/env_0/Robot/base/front_cam",
+        # prim_path="{ENV_REGEX_NS}/Robot/base/front_cam",
         update_period=0.1,
         height=720, #480,
         width=1280, #640,
@@ -270,13 +255,6 @@ def run_sim():
     )
     Camera(cameraCfg)
     
-    # Create the debug draw pipeline in the post process graph
-    # writer = rep.writers.get("RtxLidar" + "DebugDrawPointCloudBuffer")
-    # writer.attach([lidar_sensor.get_render_product_path()])
-
-    annotator = rep.AnnotatorRegistry.get_annotator("RtxSensorCpuIsaacCreateRTXLidarScanBuffer")
-    annotator.attach(lidar_sensor.get_render_product_path())
-
     start_time = time.time()
 
     setup_custom_env()
@@ -294,14 +272,6 @@ def run_sim():
 
             # publish ros2 info
             stamp = base_node.get_clock().now().to_msg()
-            
-            # base_node.broadcast_static_tf("base_link", 
-            #                                 # "L1_frame", 
-            #                                 "lidar_frame",
-            #                                 # translation=(0.28945, 0.0, -0.046825),
-            #                                 translation=(0.28945, 0.0, 0.15),
-            #                                 rotation=(1.0, 0.0, 0.0, 0.0),
-            #                                 )
             
             base_node.publish_joints(env.env.scene["robot"].data.joint_names, env.env.scene["robot"].data.joint_pos[0])
             base_node.publish_robot_state([

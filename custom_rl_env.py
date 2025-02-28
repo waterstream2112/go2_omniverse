@@ -34,7 +34,7 @@ from omni.isaac.orbit.envs import RLTaskEnvCfg
 import omni.isaac.orbit.sim as sim_utils
 from omni.isaac.orbit.assets import ArticulationCfg, AssetBaseCfg
 from omni.isaac.orbit.scene import InteractiveSceneCfg
-from omni.isaac.orbit.sensors import ContactSensorCfg, RayCasterCfg, patterns
+from omni.isaac.orbit.sensors import CameraCfg, ContactSensorCfg, RayCasterCfg, patterns
 from omni.isaac.orbit.terrains import TerrainImporterCfg
 from omni.isaac.orbit.utils import configclass
 from omni.isaac.orbit_assets.unitree import UNITREE_GO2_CFG 
@@ -94,7 +94,7 @@ class MySceneCfg(InteractiveSceneCfg):
 
 
     # robots
-    robot: ArticulationCfg = MISSING
+    robot: ArticulationCfg = UNITREE_GO2_CFG.replace(prim_path="{ENV_REGEX_NS}/Robot")  #MISSING
 
     height_scanner = RayCasterCfg(
         prim_path="{ENV_REGEX_NS}/Robot/base",
@@ -116,6 +116,20 @@ class MySceneCfg(InteractiveSceneCfg):
     # sky_light = AssetBaseCfg(
     #     prim_path="/World/skyLight",
     #     spawn=sim_utils.DomeLightCfg(color=(0.13, 0.13, 0.13), intensity=5000.0),
+    # )
+    
+    # camera = CameraCfg(
+    #     prim_path="{ENV_REGEX_NS}/Robot/base/front_cam",
+    #     # prim_path="/World/envs/env_0/Robot/base/front_cam",
+    #     update_period=0.1,
+    #     height=720, #480,
+    #     width=1280, #640,
+    #     data_types=["rgb"],
+    #     spawn=sim_utils.PinholeCameraCfg(
+    #         focal_length=24.0, focus_distance=400.0, horizontal_aperture=20.955, clipping_range=(0.1, 1.0e5)
+    #         # focal_length=24.0, focus_distance=400.0, horizontal_aperture=35.0, clipping_range=(0.1, 1.0e5)
+    #     ),
+    #     offset=CameraCfg.OffsetCfg(pos=(0.32487, -0.00095, 0.05362), rot=(0.5, -0.5, 0.5, -0.5), convention="ros"),
     # )
 
 
@@ -214,7 +228,7 @@ class RewardsCfg:
         func=mdp.feet_air_time,
         weight=0.125,
         params={
-            "sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*FOOT"),
+            "sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*foot"),
             "command_name": "base_velocity",
             "threshold": 0.5,
         },
@@ -222,7 +236,7 @@ class RewardsCfg:
     undesired_contacts = RewTerm(
         func=mdp.undesired_contacts,
         weight=-1.0,
-        params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*THIGH"), "threshold": 1.0},
+        params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*thigh"), "threshold": 1.0},
     )
     # -- optional penalties
     flat_orientation_l2 = RewTerm(func=mdp.flat_orientation_l2, weight=0.0)
@@ -260,7 +274,7 @@ class EventCfg:
 class LocomotionVelocityRoughEnvCfg(RLTaskEnvCfg):
     """Configuration for the locomotion velocity-tracking environment."""
     # Scene settings
-    scene: MySceneCfg = MySceneCfg(num_envs=4096, env_spacing=2.5)
+    scene: MySceneCfg = MySceneCfg(num_envs=2, env_spacing=2.5)
     viewer: ViewerCfg = ViewerCfg()
     # Basic settings
     observations: ObservationsCfg = ObservationsCfg()
@@ -279,7 +293,7 @@ class LocomotionVelocityRoughEnvCfg(RLTaskEnvCfg):
         # simulation settings
         self.sim.dt = 0.005
         self.sim.disable_contact_processing = True
-        self.sim.physics_material = self.scene.terrain.physics_material
+        # self.sim.physics_material = self.scene.terrain.physics_material
 
         # update sensor update periods
         # we tick all the sensors based on the smallest update period (physics update period)
@@ -289,14 +303,14 @@ class LocomotionVelocityRoughEnvCfg(RLTaskEnvCfg):
         if self.scene.contact_forces is not None:
             self.scene.contact_forces.update_period = self.sim.dt
         
-        # check if terrain levels curriculum is enabled - if so, enable curriculum for terrain generator
-        # this generates terrains with increasing difficulty and is useful for training
-        if getattr(self.curriculum, "terrain_levels", None) is not None:
-            if self.scene.terrain.terrain_generator is not None:
-                self.scene.terrain.terrain_generator.curriculum = True
-        else:
-            if self.scene.terrain.terrain_generator is not None:
-                self.scene.terrain.terrain_generator.curriculum = False
+        # # check if terrain levels curriculum is enabled - if so, enable curriculum for terrain generator
+        # # this generates terrains with increasing difficulty and is useful for training
+        # if getattr(self.curriculum, "terrain_levels", None) is not None:
+        #     if self.scene.terrain.terrain_generator is not None:
+        #         self.scene.terrain.terrain_generator.curriculum = True
+        # else:
+        #     if self.scene.terrain.terrain_generator is not None:
+        #         self.scene.terrain.terrain_generator.curriculum = False
 
 
 @configclass
@@ -304,19 +318,6 @@ class UnitreeGo2CustomEnvCfg(LocomotionVelocityRoughEnvCfg):
     def __post_init__(self):
         # post init of parent
         super().__post_init__()
-
-        self.scene.robot = UNITREE_GO2_CFG.replace(prim_path="{ENV_REGEX_NS}/Robot")
-        # self.scene.robot.translation = (0.0, 5.0, 0.0)
-        # self.scene.robot.translation = (0.0, 0.0, 0.10)
-        
-        # stage: Usd.Stage = omni.usd.get_context().get_stage()
-        # robot = stage.GetPrimAtPath("{ENV_REGEX_NS}/Robot")
-        # robot.GetAttribute("xformOp:translate").Set(Gf.Vec3d(-3.0, -2.0, 0), 0)
-        # self.scene.robot.GetAttribute("xformOp:rotateXYZ").Set(Gf.Vec3d(0, 90.0, 0), 0)
-        # self.scene.robot.GetAttribute("xformOp:scale").Set(Gf.Vec3d(1.0, 1.0, 1.0), 0)
-        
-        self.scene.height_scanner.prim_path = "{ENV_REGEX_NS}/Robot/base"
-
 
         # reduce action scale
         self.actions.joint_pos.scale = 0.25
