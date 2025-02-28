@@ -233,8 +233,8 @@ def run_sim():
     # writer = rep.writers.get("RtxLidar" + "DebugDrawPointCloudBuffer")
     # writer.attach([lidar_sensor.get_render_product_path()])
 
-    # annotator = rep.AnnotatorRegistry.get_annotator("RtxSensorCpuIsaacCreateRTXLidarScanBuffer")
-    # annotator.attach(lidar_sensor.get_render_product_path())
+    annotator = rep.AnnotatorRegistry.get_annotator("RtxSensorCpuIsaacCreateRTXLidarScanBuffer")
+    annotator.attach(lidar_sensor.get_render_product_path())
     
     print(lidar_sensor)
 
