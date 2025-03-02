@@ -67,8 +67,8 @@ class RobotBaseNode(Node):
 
         odom_trans = TransformStamped()
         odom_trans.header.stamp = stamp 
-        odom_trans.header.frame_id = 'camera_init'
-        odom_trans.child_frame_id = 'lidar_frame'
+        odom_trans.header.frame_id = 'odom'
+        odom_trans.child_frame_id = 'base_link'
         
         odom_trans.transform.translation.x = base_pos[0].item()
         odom_trans.transform.translation.y = base_pos[1].item()

@@ -272,11 +272,6 @@ def run_sim():
             obs, _, _, _ = env.step(actions)
 
             # publish ros2 info
-            stamp = base_node.get_clock().now() #base_node.get_clock().now().to_msg()
-            stamp_offset = rclpy.duration.Duration(nanoseconds=100000000)   # 1ms = 1 000 000 ns
-            stamp += stamp_offset
-            stamp = stamp.to_msg()
-            
             base_node.publish_joints(env.env.scene["robot"].data.joint_names, env.env.scene["robot"].data.joint_pos[0])
             base_node.publish_robot_state([
                 env.env.scene["contact_forces"].data.net_forces_w[0][4][2], 
@@ -284,6 +279,7 @@ def run_sim():
                 env.env.scene["contact_forces"].data.net_forces_w[0][14][2], 
                 env.env.scene["contact_forces"].data.net_forces_w[0][18][2]
                 ])
+            base_node.publish_odom(env.env.scene["robot"].data.root_state_w[0, :3], env.env.scene["robot"].data.root_state_w[0, 3:7], base_node.get_clock().now().to_msg())
     
             try:
                 if (time.time() - start_time) > 1/20:
@@ -300,12 +296,16 @@ def run_sim():
                     # point_cloud = data['data'] + [0.28945, 0, -0.046825]
                     point_cloud = data['data']
                     
+                    stamp = base_node.get_clock().now() #base_node.get_clock().now().to_msg()
+                    stamp_offset = rclpy.duration.Duration(nanoseconds=90000000)   # 1ms = 1 000 000 ns
+                    stamp -= stamp_offset
+                    stamp = stamp.to_msg()
             
                     base_node.publish_lidar(point_cloud, stamp)
                     start_time = time.time()
             except :
                 pass
             
-            base_node.publish_odom(env.env.scene["robot"].data.root_state_w[0, :3], env.env.scene["robot"].data.root_state_w[0, 3:7], stamp)
+            
             
     env.close()
