@@ -4,6 +4,7 @@ from __future__ import annotations
 import carb.input
 import omni.kit
 import omni.kit.app
+import rclpy.duration
 
 
 
@@ -271,7 +272,10 @@ def run_sim():
             obs, _, _, _ = env.step(actions)
 
             # publish ros2 info
-            stamp = base_node.get_clock().now().to_msg()
+            stamp = base_node.get_clock().now() #base_node.get_clock().now().to_msg()
+            stamp_offset = rclpy.duration.Duration(nanoseconds=100000000)   # 1ms = 1 000 000 ns
+            stamp += stamp_offset
+            stamp = stamp.to_msg()
             
             base_node.publish_joints(env.env.scene["robot"].data.joint_names, env.env.scene["robot"].data.joint_pos[0])
             base_node.publish_robot_state([

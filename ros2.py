@@ -66,9 +66,7 @@ class RobotBaseNode(Node):
     def publish_odom(self, base_pos, base_rot, stamp):
 
         odom_trans = TransformStamped()
-        odom_trans.header.stamp = stamp #self.get_clock().now().to_msg()
-        # odom_trans.header.frame_id = 'odom'
-        # odom_trans.child_frame_id = 'base_link'
+        odom_trans.header.stamp = stamp 
         odom_trans.header.frame_id = 'camera_init'
         odom_trans.child_frame_id = 'lidar_frame'
         
@@ -110,13 +108,8 @@ class RobotBaseNode(Node):
     def publish_lidar(self, points, stamp):
 
         point_cloud = PointCloud2()
-        
-        # point_cloud.header = Header(frame_id="odom")
-        # point_cloud.header = Header(frame_id="base_link")
-        # point_cloud.header = Header(frame_id="L1_frame")
         point_cloud.header = Header(frame_id="lidar_frame")
-        
-        point_cloud.header.stamp = stamp #self.get_clock().now().to_msg()
+        point_cloud.header.stamp = stamp 
         fields = [
             PointField(name='x', offset=0, datatype=PointField.FLOAT32, count=1),
             PointField(name='y', offset=4, datatype=PointField.FLOAT32, count=1),
