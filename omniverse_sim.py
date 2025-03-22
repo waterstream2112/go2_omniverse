@@ -155,6 +155,10 @@ def setup_custom_env():
         if (args_cli.custom_env == "Patt"):
             cfg_scene = sim_utils.UsdFileCfg(usd_path="/home/nghiaho/Nemeaeus/SceneGraph/SimEnv/Procyon_IROS_ENV/IROS_ENV_01/L_Procyon_FireENV_01_.usd")
             cfg_scene.func("/World/house", cfg_scene, translation=(14.50, 3.50, 0.0))
+            
+        if (args_cli.custom_env == "Conf"):
+            cfg_scene = sim_utils.UsdFileCfg(usd_path="/home/nghiaho/Nemeaeus/OmniverseEnvs/Env_01/Env01_1.usd")
+            cfg_scene.func("/World/house", cfg_scene, translation=(14.50, 2.50, 0.0))
     
             
         # following config for stair does not work
@@ -282,7 +286,7 @@ def run_sim():
             base_node.publish_odom(env.env.scene["robot"].data.root_state_w[0, :3], env.env.scene["robot"].data.root_state_w[0, 3:7], base_node.get_clock().now().to_msg())
     
             try:
-                if (time.time() - start_time) > 1/20:
+                if (time.time() - start_time) > 1/10:
                     data = annotator.get_data()
                     # point_cloud = update_meshes_for_cloud2(
                     #     data['data'], env.env.scene["robot"].data.root_state_w[0, :3], 

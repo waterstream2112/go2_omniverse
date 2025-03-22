@@ -79,20 +79,20 @@ class RobotBaseNode(Node):
         odom_trans.transform.rotation.w = base_rot[0].item()
         self.broadcaster.sendTransform(odom_trans)
         
-        # odom = Odometry()
-        # odom.header.stamp = stamp
-        # odom.header.frame_id = 'odom'
+        odom = Odometry()
+        odom.header.stamp = stamp
+        odom.header.frame_id = 'odom'
         
-        # odom.pose.pose.position.x = base_pos[0].item()
-        # odom.pose.pose.position.y = base_pos[1].item()
-        # odom.pose.pose.position.z = base_pos[2].item()
+        odom.pose.pose.position.x = base_pos[0].item()
+        odom.pose.pose.position.y = base_pos[1].item()
+        odom.pose.pose.position.z = base_pos[2].item()
         
-        # odom.pose.pose.orientation.w = base_rot[0].item()
-        # odom.pose.pose.orientation.x = base_rot[1].item()
-        # odom.pose.pose.orientation.y = base_rot[2].item()
-        # odom.pose.pose.orientation.z = base_rot[3].item()
+        odom.pose.pose.orientation.w = base_rot[0].item()
+        odom.pose.pose.orientation.x = base_rot[1].item()
+        odom.pose.pose.orientation.y = base_rot[2].item()
+        odom.pose.pose.orientation.z = base_rot[3].item()
         
-        # self.go2_odom_pub.publish(odom)
+        self.go2_odom_pub.publish(odom)
 
     def publish_robot_state(self, foot_force_lst):
 
