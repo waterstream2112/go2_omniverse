@@ -315,6 +315,10 @@ class LocomotionVelocityRoughEnvCfg(RLTaskEnvCfg):
 
 @configclass
 class UnitreeGo2CustomEnvCfg(LocomotionVelocityRoughEnvCfg):
+    # def __init__(self, namespace):
+    #     super().__init__(self)
+    #     self.namespace = namespace
+        
     def __post_init__(self):
         # post init of parent
         super().__post_init__()
@@ -335,4 +339,4 @@ class UnitreeGo2CustomEnvCfg(LocomotionVelocityRoughEnvCfg):
         self.terminations.base_contact.params["sensor_cfg"].body_names = "base"
 
         #create ros2 camera stream omnigraph
-        create_front_cam_omnigraph()
+        create_front_cam_omnigraph('go2')

@@ -30,6 +30,7 @@ parser.add_argument("--num_envs", type=int, default=1, help="Number of environme
 parser.add_argument("--task", type=str, default="Isaac-Velocity-Rough-Unitree-Go2-v0", help="Name of the task.")
 parser.add_argument("--seed", type=int, default=None, help="Seed used for the environment")
 parser.add_argument("--custom_env", type=str, default="office", help="Setup the environment")
+parser.add_argument("--namespace", type=str, default="", help="ROS2 namespace")
 
 
 # append RSL-RL cli arguments
@@ -186,6 +187,7 @@ def run_sim():
     """Play with RSL-RL agent."""
     # parse configuration
     
+    # env_cfg = UnitreeGo2CustomEnvCfg(args_cli.namespace)
     env_cfg = UnitreeGo2CustomEnvCfg()
     env_cfg.scene.num_envs = args_cli.num_envs #1
     
@@ -218,10 +220,10 @@ def run_sim():
     # initialize ROS2 node
     rclpy.init()
     
-    base_node = RobotBaseNode()
+    base_node = RobotBaseNode(args_cli.namespace)
 
     node_test = rclpy.create_node('position_velocity_subscriber')
-    cmd_vel_sub = node_test.create_subscription(Twist, 'cmd_vel', cmd_vel_cb, 10)
+    cmd_vel_sub = node_test.create_subscription(Twist, args_cli.namespace + '/' + 'cmd_vel', cmd_vel_cb, 10)
 
     # Spin in a separate thread
     thread = threading.Thread(target=rclpy.spin, args=(node_test, ), daemon=True)

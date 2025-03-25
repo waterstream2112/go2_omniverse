@@ -37,8 +37,8 @@ from sensor_msgs_py import point_cloud2
 
 
 class RobotBaseNode(Node):
-    def __init__(self):
-        super().__init__('go2_driver_node')
+    def __init__(self, namespace):
+        super().__init__('go2_driver_node', namespace=namespace, cli_args=['/tf:=tf', '/tf_static:=tf_static'])
         qos_profile = QoSProfile(depth=10)
         self.joint_pub = self.create_publisher(JointState, 'joint_states', qos_profile)
         self.go2_state_pub = self.create_publisher(Go2State, 'go2_states', qos_profile)
@@ -46,6 +46,7 @@ class RobotBaseNode(Node):
         self.go2_odom_pub = self.create_publisher(Odometry, 'odom', qos_profile)
         self.broadcaster = TransformBroadcaster(self, qos=qos_profile)
         self.staticBroadcaster = TransformBroadcaster(self, qos=qos_profile)
+        
         
     def publish_joints(self, joint_names_lst, joint_state_lst):
         # Create message

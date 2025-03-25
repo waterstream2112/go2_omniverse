@@ -50,4 +50,4 @@ export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libstdc++.so.6
 # ${ISAACSIM_PYTHON_EXE} main.py --custom_env="BD" --num_envs=1
 # ${ISAACSIM_PYTHON_EXE} main.py --custom_env="Patt" --num_envs=1
 # ${ISAACSIM_PYTHON_EXE} main.py --custom_env=warehouse
-${ISAACSIM_PYTHON_EXE} main.py --custom_env="Conf" --num_envs=1
+${ISAACSIM_PYTHON_EXE} main.py --custom_env="Conf" --num_envs=1 --namespace=${ROBOT_NAMESPACE}
