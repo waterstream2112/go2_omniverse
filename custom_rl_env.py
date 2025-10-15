@@ -73,6 +73,7 @@ class MySceneCfg(InteractiveSceneCfg):
         terrain_type="plane",
         debug_vis=False,
     )
+    
     # terrain = TerrainImporterCfg(
     #     prim_path="/World/ground",
     #     terrain_type="generator",
@@ -338,5 +339,5 @@ class UnitreeGo2CustomEnvCfg(LocomotionVelocityRoughEnvCfg):
         # terminations
         self.terminations.base_contact.params["sensor_cfg"].body_names = "base"
 
-        #create ros2 camera stream omnigraph
+        # create ros2 camera stream omnigraph
         create_front_cam_omnigraph('go2')

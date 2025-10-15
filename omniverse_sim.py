@@ -76,10 +76,13 @@ from omni.isaac.orbit_tasks.utils.wrappers.rsl_rl import (
 import omni.isaac.orbit.sim as sim_utils
 from omni.isaac.orbit.sensors import CameraCfg, Camera
 from omni.isaac.sensor import LidarRtx
+from omni.isaac.sensor import IMUSensor
+from omni.isaac.core.utils.prims import create_prim
 import omni.replicator.core as rep
 import omni.appwindow
 from rsl_rl.runners import OnPolicyRunner
 from scipy.spatial.transform import Rotation
+
 
 
 import rclpy
@@ -93,6 +96,8 @@ import custom_rl_env
 from terrain_cfg import ROUGH_TERRAINS_CFG
 
 from pxr import Usd, UsdGeom, Gf
+
+from scipy.spatial.transform import Rotation
 
 
 def sub_keyboard_event(event, *args, **kwargs) -> bool:
@@ -159,7 +164,12 @@ def setup_custom_env():
             
         if (args_cli.custom_env == "Conf"):
             cfg_scene = sim_utils.UsdFileCfg(usd_path="/home/nghiaho/Nemeaeus/OmniverseEnvs/Env_01/Env01_1.usd")
-            cfg_scene.func("/World/house", cfg_scene, translation=(14.50, 2.50, 0.0))
+            # cfg_scene.func("/World/house", cfg_scene, translation=(14.50, 2.50, 0.0)) # corridor
+            # cfg_scene.func("/World/house", cfg_scene, translation=(10.50, -17.50, 0.0)) # room 1
+            # cfg_scene.func("/World/house", cfg_scene, translation=(2.0, -14.0, 0.0)) # room 2
+            cfg_scene.func("/World/house", cfg_scene, translation=(1.0, 2.0, 0.0)) # room 3
+            # cfg_scene.func("/World/house", cfg_scene, translation=(14.50, 2.50, 0.0)) # snippets for low obstacle and semantic class
+            # cfg_scene.func("/World/house", cfg_scene, translation=(2.0, -14.0, 0.0)) # snippet for overhang map
     
             
         # following config for stair does not work
@@ -229,13 +239,14 @@ def run_sim():
     thread = threading.Thread(target=rclpy.spin, args=(node_test, ), daemon=True)
     thread.start()
 
-    # Create lidar
+    # Create LiDAR
     lidar_sensor = LidarRtx(f'/World/envs/env_0/Robot/base/lidar_sensor',
                                         #  translation=(0.28945, 0.0, -0.046825),
                                          translation=(0.28945, 0.0, 0.15),
                                          orientation=(1.0, 0.0, 0.0, 0.0),
                                          config_file_name= "Unitree_L1",
                                          )
+    
     # # Create the debug draw pipeline in the post process graph
     # writer = rep.writers.get("RtxLidar" + "DebugDrawPointCloudBuffer")
     # writer.attach([lidar_sensor.get_render_product_path()])
@@ -244,6 +255,29 @@ def run_sim():
     annotator.attach(lidar_sensor.get_render_product_path())
     
     print(lidar_sensor)
+    
+    
+    # Create IMU
+    # imu_sensor = IMUSensor(
+    #     prim_path="/World/envs/env_0/Robot/base/imu_sensor",  
+    #     name="MyIMU",
+    #     frequency=200.0,  # Hz
+    #     translation=(0.28945, 0.0, 0.15),
+    #     orientation=(1.0, 0.0, 0.0, 0.0),
+    # )
+    # create_prim(
+    #     prim_path="/World/envs/env_0/Robot/base/imu_sensor",
+    #     prim_type="IMUSensor",        # This is the required type name
+    #     translation=(0.28945, 0.0, 0.15),
+    #     attributes={
+    #         "sensorPeriod": 0.01,
+    #         # "noiseMean": [0.0, 0.0, 0.0],
+    #         # "noiseStdDev": [0.01, 0.01, 0.01],
+    #         # "angularVelocityEnabled": True,
+    #         # "linearAccelerationEnabled": True,
+    #         # "orientationEnabled": True,  
+    #     }
+    # )
 
 
     # Create camera
@@ -309,6 +343,7 @@ def run_sim():
             
                     base_node.publish_lidar(point_cloud, stamp)
                     start_time = time.time()
+                    
             except :
                 pass
             

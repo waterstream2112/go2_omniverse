@@ -24,14 +24,19 @@
 
 source /opt/ros/${ROS_DISTRO}/setup.bash
 
-cd IsaacSim-ros_workspaces/${ROS_DISTRO}_ws
-rosdep install --from-paths src --ignore-src -r -y
-colcon build
-source install/local_setup.bash
+# cd IsaacSim-ros_workspaces/${ROS_DISTRO}_ws
+# rosdep install --from-paths src --ignore-src -r -y
+# colcon build
+# source install/local_setup.bash
 
-cd ../..
-cd go2_omniverse_ws
-rosdep install --from-paths src --ignore-src -r -y
+# cd ../..
+# cd go2_omniverse_ws
+# rosdep install --from-paths src --ignore-src -r -y
+# colcon build
+# source install/local_setup.bash
+# cd ..
+
+cd ~/Omniverse/go2_omniverse/go2_omniverse_ws
 colcon build
 source install/local_setup.bash
 cd ..

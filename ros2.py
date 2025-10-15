@@ -32,7 +32,7 @@ from nav_msgs.msg import Odometry
 from tf2_ros import TransformBroadcaster, StaticTransformBroadcaster
 from go2_interfaces.msg import Go2State
 from std_msgs.msg import Header
-from sensor_msgs.msg import PointCloud2, PointField
+from sensor_msgs.msg import PointCloud2, PointField, Imu
 from sensor_msgs_py import point_cloud2
 
 
@@ -43,6 +43,7 @@ class RobotBaseNode(Node):
         self.joint_pub = self.create_publisher(JointState, 'joint_states', qos_profile)
         self.go2_state_pub = self.create_publisher(Go2State, 'go2_states', qos_profile)
         self.go2_lidar_pub = self.create_publisher(PointCloud2, 'point_cloud2', qos_profile=qos_profile_sensor_data)
+        self.go2_imu_pub = self.create_publisher(Imu, 'imu', qos_profile)
         self.go2_odom_pub = self.create_publisher(Odometry, 'odom', qos_profile)
         self.broadcaster = TransformBroadcaster(self, qos=qos_profile)
         self.staticBroadcaster = TransformBroadcaster(self, qos=qos_profile)
@@ -119,6 +120,41 @@ class RobotBaseNode(Node):
         point_cloud = point_cloud2.create_cloud(point_cloud.header, fields, points)
         self.go2_lidar_pub.publish(point_cloud)
         
+        
+    def publish_imu(self, imu_data, stamp):
+        # Create and populate the ROS2 Imu message
+        imu_msg = Imu()
+        imu_msg.header = Header()
+        imu_msg.header.stamp = stamp
+        imu_msg.header.frame_id = "imu_frame"
+
+        # Linear acceleration
+        imu_msg.linear_acceleration.x = imu_data.linear_acceleration[0]
+        imu_msg.linear_acceleration.y = imu_data.linear_acceleration[1]
+        imu_msg.linear_acceleration.z = imu_data.linear_acceleration[2]
+
+        # Angular velocity
+        imu_msg.angular_velocity.x = imu_data.angular_velocity[0]
+        imu_msg.angular_velocity.y = imu_data.angular_velocity[1]
+        imu_msg.angular_velocity.z = imu_data.angular_velocity[2]
+
+        # Orientation (IMU sensor provides orientation as a quaternion)
+        # Note: The IMU sensor might provide orientation relative to its initial pose or world.
+        # You might need to adjust this based on your coordinate frame conventions.
+        imu_msg.orientation.x = imu_data.orientation[0]
+        imu_msg.orientation.y = imu_data.orientation[1]
+        imu_msg.orientation.z = imu_data.orientation[2]
+        imu_msg.orientation.w = imu_data.orientation[3]
+
+        # Covariance matrices (set to 0 if not available or known)
+        imu_msg.linear_acceleration_covariance = [0.0] * 9
+        imu_msg.angular_velocity_covariance = [0.0] * 9
+        imu_msg.orientation_covariance = [0.0] * 9
+
+        # Publish the message
+        self.go2_imu_pub.publish(imu_msg)
+        # self.ros_node.get_logger().info(f"Published IMU data: Linear Accel: {imu_data.linear_acceleration}")
+    
 
     def broadcast_static_tf(self, parent, child, translation, rotation):
         

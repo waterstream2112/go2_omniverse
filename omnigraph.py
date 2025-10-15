@@ -43,6 +43,8 @@ def create_front_cam_omnigraph(namespace):
                 ("OnPlaybackTick", "omni.graph.action.OnPlaybackTick"),
                 ("IsaacCreateRenderProduct", "omni.isaac.core_nodes.IsaacCreateRenderProduct"),
                 ("ROS2CameraHelper", "omni.isaac.ros2_bridge.ROS2CameraHelper"),
+                # ("IsaacReadImu", "omni.isaac.sensor.IsaacReadIMU"),
+                # ("ROS2PublishImu", "omni.isaac.ros2_bridge.ROS2PublishImu"),
             ],
 
             keys.SET_VALUES: [
@@ -51,12 +53,21 @@ def create_front_cam_omnigraph(namespace):
                     ("ROS2CameraHelper.inputs:type", "rgb"),
                     ("ROS2CameraHelper.inputs:topicName", namespace + "/" + "unitree_go2/front_cam/rgb"),
                     ("ROS2CameraHelper.inputs:frameId", "unitree_go2"),
+                    # ("IsaacReadImu.inputs:imuPrim", "/World/envs/env_0/Robot/base/imu_sensor"),
+                    # ("ROS2PublishImu.inputs:topicName", namespace + "/" + "imu"),
+                    # ("ROS2PublishImu.inputs:frameId", "imu_frame"),
                 ],
             
             keys.CONNECT: [
                 ("OnPlaybackTick.outputs:tick", "IsaacCreateRenderProduct.inputs:execIn"),
                 ("IsaacCreateRenderProduct.outputs:execOut", "ROS2CameraHelper.inputs:execIn"),
                 ("IsaacCreateRenderProduct.outputs:renderProductPath", "ROS2CameraHelper.inputs:renderProductPath"),
+                # ("OnPlaybackTick.outputs:tick", "IsaacReadImu.inputs:execIn"),
+                # ("IsaacReadImu.outputs:execOut", "ROS2PublishImu.inputs:execIn"),
+                # ("IsaacReadImu.outputs:sensorTime", "ROS2PublishImu.inputs:timeStamp"),
+                # ("IsaacReadImu.outputs:angVel", "ROS2PublishImu.inputs:angularVelocity"),
+                # ("IsaacReadImu.outputs:linAcc", "ROS2PublishImu.inputs:linearAcceleration"),
+                # ("IsaacReadImu.outputs:orientation", "ROS2PublishImu.inputs:orientation"), 
             ],
 
         },
